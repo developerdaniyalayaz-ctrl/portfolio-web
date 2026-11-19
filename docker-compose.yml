@@ -1,0 +1,35 @@
+services:
+  portfolio-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portfolio-web
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/uploads:/app/uploads
+      - ./backend/backups:/app/backups
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      - PORT=8001
+      - DATABASE_URL=${DATABASE_URL:-sqlite:////app/data/portfolio.db}
+      - JWT_SECRET=${JWT_SECRET:-cyber-neon-portfolio-admin-supersecret-jwt-key-2026!#$}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-1440}
+      - SUPERADMIN_USERNAME=${SUPERADMIN_USERNAME:-admin}
+      - SUPERADMIN_PASSWORD_HASH=${SUPERADMIN_PASSWORD_HASH:-}
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-daniyalayazahmed@gmail.com}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-Daniyal Ayaz | Full-Stack & AI Architect}
+      - ADMIN_NOTIFY_EMAIL=${ADMIN_NOTIFY_EMAIL:-daniyalayazahmed@gmail.com}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/projects"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

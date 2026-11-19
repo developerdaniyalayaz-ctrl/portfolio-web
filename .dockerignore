@@ -1,0 +1,44 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies
+node_modules
+**/node_modules
+frontend/node_modules
+
+# Mobile app (excluded from web container)
+mobile_app
+mobile_app/
+
+# Python cache & compiled bytecode
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+
+# Secrets and local environment files
+.env
+**/.env
+backend/.env
+frontend/.env
+*.local
+
+# SQLite WAL and temporary files (avoid baking volatile locks into image)
+*.db-wal
+*.db-shm
+
+# IDE, editor and OS metadata
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+frontend/dist
+dist/
+build/

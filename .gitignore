@@ -1,0 +1,28 @@
+# Dependencies & Environments
+node_modules/
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Build Outputs
+frontend/dist/
+mobile_app/build/
+mobile_app/.dart_tool/
+*.apk
+*.aab
+
+# Local Secrets & Runtime Data
+.env
+backend/.env
+backend/data/*.db*
+backend/backups/*.db.gz
+.DS_Store
+Thumbs.db
+*.pem
+*.key
+.env
+backend/.env
+backend/data/*.db*
+backend/backups/*.db.gz
