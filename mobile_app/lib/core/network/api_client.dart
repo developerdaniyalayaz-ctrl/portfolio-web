@@ -19,8 +19,9 @@ class ApiClient {
   ApiClient() {
     _dio = Dio(
       BaseOptions(
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 12),
+        sendTimeout: const Duration(seconds: 10),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -51,7 +52,11 @@ class ApiClient {
               message = data;
             }
           } else if (error.type == DioExceptionType.connectionTimeout) {
-            message = 'Connection timed out. Check server address: ${AppConfig.currentBaseUrl}';
+            message = 'Connection timed out. Check server connectivity at ${AppConfig.currentBaseUrl}';
+          } else if (error.type == DioExceptionType.receiveTimeout) {
+            message = 'Server response timed out. High network latency from Sydney node.';
+          } else if (error.type == DioExceptionType.sendTimeout) {
+            message = 'Request transmission timed out. Check network connection.';
           } else if (error.type == DioExceptionType.connectionError) {
             message = 'Could not reach server at ${AppConfig.currentBaseUrl}. Check network connectivity.';
           }

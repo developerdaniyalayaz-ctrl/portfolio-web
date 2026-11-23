@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../core/config/app_config.dart';
 import '../core/theme/cyber_neon_theme.dart';
 import '../models/project_model.dart';
@@ -71,11 +72,38 @@ class ProjectCardWidget extends ConsumerWidget {
               fit: StackFit.expand,
               children: [
                 if (imageUrl.isNotEmpty)
-                  Image.network(
-                    imageUrl,
+                  CachedNetworkImage(
+                    imageUrl: imageUrl,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
-                    errorBuilder: (_, __, ___) => _buildPlaceholderGraphic(),
+                    placeholder: (context, url) => Container(
+                      color: CyberNeonTheme.backgroundDeep,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: CyberNeonTheme.cyan,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'CACHING ASSET...',
+                              style: GoogleFonts.jetBrainsMono(
+                                color: CyberNeonTheme.textMuted,
+                                fontSize: 9,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    errorWidget: (_, __, ___) => _buildPlaceholderGraphic(),
                   )
                 else
                   _buildPlaceholderGraphic(),

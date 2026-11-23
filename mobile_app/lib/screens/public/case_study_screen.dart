@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/config/app_config.dart';
 import '../../core/theme/cyber_neon_theme.dart';
 import '../../models/project_model.dart';
@@ -291,10 +292,36 @@ class CaseStudyScreen extends ConsumerWidget {
                         child: Stack(
                           children: [
                             Center(
-                              child: Image.network(
-                                archUrl,
+                              child: CachedNetworkImage(
+                                imageUrl: archUrl,
                                 fit: BoxFit.contain,
-                                errorBuilder: (_, __, ___) => const Center(
+                                placeholder: (context, url) => Container(
+                                  color: CyberNeonTheme.backgroundDeep,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: CyberNeonTheme.cyan,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'CACHING BLUEPRINT...',
+                                          style: GoogleFonts.jetBrainsMono(
+                                            color: CyberNeonTheme.textMuted,
+                                            fontSize: 9,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (_, __, ___) => const Center(
                                   child: Icon(Icons.broken_image, color: CyberNeonTheme.crimson),
                                 ),
                               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/config/app_config.dart';
 import '../../core/theme/cyber_neon_theme.dart';
 
@@ -125,26 +126,38 @@ class _BlueprintViewerScreenState extends State<BlueprintViewerScreen> {
             maxScale: 4.0,
             panEnabled: true,
             boundaryMargin: const EdgeInsets.all(32),
-            child: Image.network(
-              fullUrl,
+            child: CachedNetworkImage(
+              imageUrl: fullUrl,
               fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => Center(
+              placeholder: (context, url) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: CyberNeonTheme.cyan,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'CACHING HIGH-RES BLUEPRINT...',
+                      style: GoogleFonts.jetBrainsMono(
+                        color: CyberNeonTheme.textMuted,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              errorWidget: (_, __, ___) => Center(
                 child: Text(
                   'Failed to load architecture diagram.',
                   style: GoogleFonts.jetBrainsMono(color: CyberNeonTheme.crimson),
                 ),
               ),
-              loadingBuilder: (_, child, progress) {
-                if (progress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: progress.expectedTotalBytes != null
-                        ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
-                        : null,
-                    color: CyberNeonTheme.cyan,
-                  ),
-                );
-              },
             ),
           ),
         ),

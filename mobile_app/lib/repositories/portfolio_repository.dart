@@ -26,25 +26,25 @@ class PortfolioRepository {
   }
 
   Future<List<ImpactMetricModel>> getPublicMetrics() async {
-    final response = await _apiClient.get('/api/public/metrics');
+    final response = await _apiClient.get('/api/metrics');
     final list = response.data as List;
     return list.map((e) => ImpactMetricModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<List<TestimonialModel>> getPublicTestimonials() async {
-    final response = await _apiClient.get('/api/public/testimonials');
+    final response = await _apiClient.get('/api/testimonials');
     final list = response.data as List;
     return list.map((e) => TestimonialModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<List<EngagementModel>> getPublicEngagements() async {
-    final response = await _apiClient.get('/api/public/engagements');
+    final response = await _apiClient.get('/api/engagements');
     final list = response.data as List;
     return list.map((e) => EngagementModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<Map<String, dynamic>> getPublicContactMatrix() async {
-    final response = await _apiClient.get('/api/public/contact-matrix');
+    final response = await _apiClient.get('/api/contact-matrix');
     return response.data as Map<String, dynamic>;
   }
 
@@ -137,7 +137,7 @@ class PortfolioRepository {
   // --- ADMIN METRICS CRUD ---
 
   Future<List<ImpactMetricModel>> getAllMetrics() async {
-    final response = await _apiClient.get('/api/metrics');
+    final response = await _apiClient.get('/api/admin/metrics');
     final list = response.data as List;
     return list.map((e) => ImpactMetricModel.fromJson(e as Map<String, dynamic>)).toList();
   }
@@ -159,7 +159,7 @@ class PortfolioRepository {
   // --- ADMIN TESTIMONIALS CRUD ---
 
   Future<List<TestimonialModel>> getAllTestimonials() async {
-    final response = await _apiClient.get('/api/testimonials');
+    final response = await _apiClient.get('/api/admin/testimonials');
     final list = response.data as List;
     return list.map((e) => TestimonialModel.fromJson(e as Map<String, dynamic>)).toList();
   }
@@ -181,7 +181,7 @@ class PortfolioRepository {
   // --- ADMIN ENGAGEMENTS CRUD ---
 
   Future<List<EngagementModel>> getAllEngagements() async {
-    final response = await _apiClient.get('/api/engagements');
+    final response = await _apiClient.get('/api/admin/engagements');
     final list = response.data as List;
     return list.map((e) => EngagementModel.fromJson(e as Map<String, dynamic>)).toList();
   }

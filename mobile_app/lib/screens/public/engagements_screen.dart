@@ -11,6 +11,18 @@ class EngagementsScreen extends ConsumerWidget {
 
   const EngagementsScreen({Key? key, required this.onNavigateContact}) : super(key: key);
 
+  Color _resolveTierAccent(String accent, int index) {
+    final a = accent.toLowerCase();
+    if (a == 'emerald' || a == 'green') return CyberNeonTheme.emerald;
+    if (a == 'violet' || a == 'purple') return CyberNeonTheme.violet;
+    if (a == 'cyan' || a == 'blue') return CyberNeonTheme.cyanBright;
+    return index == 1
+        ? CyberNeonTheme.cyanBright
+        : index == 2
+            ? CyberNeonTheme.violet
+            : CyberNeonTheme.emerald;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final engagementsAsync = ref.watch(publicEngagementsProvider);
@@ -47,15 +59,12 @@ class EngagementsScreen extends ConsumerWidget {
               itemCount: tiers.length,
               itemBuilder: (context, index) {
                 final tier = tiers[index];
+                final tierAccent = _resolveTierAccent(tier.accentColor, index);
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: CyberCard(
                     hasTopAccent: true,
-                    topAccentColor: index == 1
-                        ? CyberNeonTheme.cyanBright
-                        : index == 2
-                            ? CyberNeonTheme.violet
-                            : CyberNeonTheme.emerald,
+                    topAccentColor: tierAccent,
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,11 +74,7 @@ class EngagementsScreen extends ConsumerWidget {
                           children: [
                             NeonBadge(
                               text: tier.tierBadge,
-                              color: index == 1
-                                  ? CyberNeonTheme.cyanBright
-                                  : index == 2
-                                      ? CyberNeonTheme.violet
-                                      : CyberNeonTheme.emerald,
+                              color: tierAccent,
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

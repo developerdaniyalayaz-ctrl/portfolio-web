@@ -9,6 +9,7 @@ from typing import List, Optional
 
 from fastapi import FastAPI, Depends, HTTPException, status, Query, File, UploadFile, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
@@ -99,7 +100,16 @@ BACKUPS_DIR = os.path.join(BASE_DIR, "backups")
 # Automatically create uploads and backups directories on startup if missing
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(BACKUPS_DIR, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
+class CachedStaticFiles(StaticFiles):
+    """Static file handler that attaches public Cache-Control headers for media assets."""
+    async def get_response(self, path: str, scope):
+        response = await super().get_response(path, scope)
+        if response.status_code == 200:
+            response.headers["Cache-Control"] = "public, max-age=86400"
+        return response
+
+app.mount("/uploads", CachedStaticFiles(directory=UPLOAD_DIR), name="uploads")
 
 def get_static_dist_dir() -> Optional[str]:
     """Resolves production frontend build directory across Docker and local layouts."""
@@ -134,6 +144,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Enable GZip compression for all responses >= 500 bytes (reduces latency over AWS Sydney)
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 # Allowed file upload formats
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
@@ -407,6 +420,7 @@ def get_dashboard_stats(
 
 # --- PROJECTS CRUD & REORDER MODULE ---
 @app.get("/api/projects", response_model=List[ProjectResponse], tags=["Projects"])
+@app.get("/api/public/projects", response_model=List[ProjectResponse], tags=["Projects"], include_in_schema=False)
 def list_projects(
     search: Optional[str] = Query(None, description="Search across title, tech stack, or description"),
     category: Optional[str] = Query(None, description="Filter by category"),
@@ -1266,6 +1280,7 @@ def delete_stack_item(
 # ==========================================
 
 @app.get("/api/contact-matrix", response_model=ContactMatrixResponse, tags=["Contact Matrix"])
+@app.get("/api/public/contact-matrix", response_model=ContactMatrixResponse, tags=["Contact Matrix"], include_in_schema=False)
 def get_contact_matrix(db: Session = Depends(get_db)):
     """
     Public route: Retrieve the singleton Node Contact Matrix configuration.
@@ -1329,6 +1344,7 @@ def update_contact_matrix(
 # ==========================================
 
 @app.get("/api/metrics", response_model=List[ImpactMetricResponse], tags=["Impact Metrics"])
+@app.get("/api/public/metrics", response_model=List[ImpactMetricResponse], tags=["Impact Metrics"], include_in_schema=False)
 def get_public_metrics(db: Session = Depends(get_db)):
     """
     Public route: Returns active impact telemetry metrics ordered by sequence.
@@ -1471,6 +1487,7 @@ def delete_impact_metric(
 # ==========================================
 
 @app.get("/api/testimonials", response_model=List[TestimonialResponse], tags=["Testimonials"])
+@app.get("/api/public/testimonials", response_model=List[TestimonialResponse], tags=["Testimonials"], include_in_schema=False)
 def get_public_testimonials(db: Session = Depends(get_db)):
     """
     Public route: Returns active verified client testimonials ordered by sequence.
@@ -1616,6 +1633,7 @@ def delete_testimonial(
 # ==========================================
 
 @app.get("/api/engagements", response_model=List[EngagementModelResponse], tags=["Engagement Models"])
+@app.get("/api/public/engagements", response_model=List[EngagementModelResponse], tags=["Engagement Models"], include_in_schema=False)
 def get_public_engagements(db: Session = Depends(get_db)):
     """
     Public route: Returns active engagement models ordered by sequence.

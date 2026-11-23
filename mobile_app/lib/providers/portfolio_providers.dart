@@ -24,28 +24,30 @@ final portfolioRepositoryProvider = Provider<PortfolioRepository>((ref) {
 
 final selectedCategoryProvider = StateProvider<String>((ref) => 'ALL');
 
-final publicProjectsProvider = FutureProvider.autoDispose<List<ProjectModel>>((ref) async {
+/// In-memory cached providers: Keeps fetched state alive across tab switches.
+/// Pull-to-refresh triggers manual invalidation via ref.invalidate(...).
+final publicProjectsProvider = FutureProvider<List<ProjectModel>>((ref) async {
   final repo = ref.watch(portfolioRepositoryProvider);
   final category = ref.watch(selectedCategoryProvider);
   return await repo.getPublicProjects(category: category);
 });
 
-final publicMetricsProvider = FutureProvider.autoDispose<List<ImpactMetricModel>>((ref) async {
+final publicMetricsProvider = FutureProvider<List<ImpactMetricModel>>((ref) async {
   final repo = ref.watch(portfolioRepositoryProvider);
   return await repo.getPublicMetrics();
 });
 
-final publicTestimonialsProvider = FutureProvider.autoDispose<List<TestimonialModel>>((ref) async {
+final publicTestimonialsProvider = FutureProvider<List<TestimonialModel>>((ref) async {
   final repo = ref.watch(portfolioRepositoryProvider);
   return await repo.getPublicTestimonials();
 });
 
-final publicEngagementsProvider = FutureProvider.autoDispose<List<EngagementModel>>((ref) async {
+final publicEngagementsProvider = FutureProvider<List<EngagementModel>>((ref) async {
   final repo = ref.watch(portfolioRepositoryProvider);
   return await repo.getPublicEngagements();
 });
 
-final publicContactMatrixProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final publicContactMatrixProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final repo = ref.watch(portfolioRepositoryProvider);
   return await repo.getPublicContactMatrix();
 });

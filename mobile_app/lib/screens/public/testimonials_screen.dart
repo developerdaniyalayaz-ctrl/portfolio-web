@@ -9,7 +9,14 @@ import '../../widgets/neon_badge.dart';
 class TestimonialsScreen extends ConsumerWidget {
   const TestimonialsScreen({Key? key}) : super(key: key);
 
-  Color _resolveBadgeColor(String badge) {
+  Color _resolveBadgeColor(String badge, [String? color]) {
+    if (color != null && color.isNotEmpty) {
+      final c = color.toLowerCase();
+      if (c == 'emerald' || c == 'green') return CyberNeonTheme.emerald;
+      if (c == 'cyan' || c == 'blue') return CyberNeonTheme.cyanBright;
+      if (c == 'violet' || c == 'purple') return CyberNeonTheme.violet;
+      if (c == 'amber' || c == 'orange') return CyberNeonTheme.amber;
+    }
     final b = badge.toLowerCase();
     if (b.contains('upwork')) return CyberNeonTheme.emerald;
     if (b.contains('fiverr')) return CyberNeonTheme.emeraldBright;
@@ -65,7 +72,7 @@ class TestimonialsScreen extends ConsumerWidget {
                           children: [
                             NeonBadge(
                               text: r.platformBadge,
-                              color: _resolveBadgeColor(r.platformBadge),
+                              color: _resolveBadgeColor(r.platformBadge, r.badgeColor),
                             ),
                             Row(
                               children: List.generate(5, (starIdx) {

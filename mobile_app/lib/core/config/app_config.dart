@@ -5,15 +5,15 @@ class AppConfig {
   /// Compile-time override passed via: --dart-define=API_BASE_URL=...
   static const String compileTimeBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');
 
-  /// Production cloud server endpoint
-  static const String productionBaseUrl = 'http://3.26.164.104:8000';
+  /// Production cloud server endpoint (AWS EC2 Sydney instance)
+  static const String productionBaseUrl = 'http://16.179.209.88:8001';
 
   /// Default host address based on environment and platform:
   /// 1. If --dart-define=API_BASE_URL=... is provided, use it.
-  /// 2. In release mode (non-debug), default to productionBaseUrl (http://3.26.164.104:8000).
+  /// 2. In release mode (non-debug), default to productionBaseUrl (http://16.179.209.88:8001).
   /// 3. In debug mode:
-  ///    - Android emulator: http://10.0.2.2:8000
-  ///    - iOS / Web / Desktop: http://localhost:8000
+  ///    - Android emulator: http://10.0.2.2:8001 (or pass --dart-define=API_BASE_URL=http://16.179.209.88:8001)
+  ///    - iOS / Web / Desktop: http://localhost:8001
   static String get defaultBaseUrl {
     if (compileTimeBaseUrl.trim().isNotEmpty) {
       return compileTimeBaseUrl.trim();
@@ -23,14 +23,14 @@ class AppConfig {
       return productionBaseUrl;
     }
 
-    if (kIsWeb) return 'http://localhost:8000';
+    if (kIsWeb) return 'http://localhost:8001';
 
     try {
-      if (Platform.isAndroid) return 'http://10.0.2.2:8000';
-      if (Platform.isIOS) return 'http://localhost:8000';
+      if (Platform.isAndroid) return 'http://10.0.2.2:8001';
+      if (Platform.isIOS) return 'http://localhost:8001';
     } catch (_) {}
 
-    return 'http://10.0.2.2:8000';
+    return 'http://10.0.2.2:8001';
   }
 
   static String currentBaseUrl = defaultBaseUrl;
